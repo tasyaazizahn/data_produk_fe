@@ -17,10 +17,11 @@ export default function Produk() {
   const [deskripsi, setDeskripsi] = useState("");
 
   const fetchData = () => {
-    axios.get(`http://localhost:3000/produk`)
+    axios
+      .get(`http://localhost:3000/produk`)
       .then((response) => {
         setProduk(response.data);
-        setFilteredProduk(response.data); 
+        setFilteredProduk(response.data);
       })
       .catch((error) => console.error("Gagal mengambil data!", error));
   };
@@ -76,8 +77,8 @@ export default function Produk() {
       kode_produk: kodeProduk,
       nama_produk: namaProduk,
       kategori,
-      harga,
-      stok,
+      harga: Number(harga),
+      stok: Number(stok),
       deskripsi,
     };
 
@@ -99,7 +100,8 @@ export default function Produk() {
   const handleDelete = (id) => {
     if (!window.confirm("Yakin ingin menghapus produk?")) return;
 
-    axios.delete(`http://localhost:3000/produk/${id}`)
+    axios
+      .delete(`http://localhost:3000/produk/${id}`)
       .then(() => fetchData())
       .catch((err) => console.error("Gagal menghapus!", err));
   };
@@ -117,13 +119,12 @@ export default function Produk() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-        <button className="btn btn-primary" onClick={handleSearch}>Search</button>
+        <button className="btn btn-primary" onClick={handleSearch}>
+          Search
+        </button>
       </div>
 
-      <button
-        className="btn btn-primary mb-3"
-        onClick={openCreateModal}
-      >
+      <button className="btn btn-primary mb-3" onClick={openCreateModal}>
         Tambah Produk
       </button>
 
@@ -142,25 +143,41 @@ export default function Produk() {
           </tr>
         </thead>
         <tbody>
-          {filteredProduk.map((item, index) => (
-            <tr key={item.id}>
-              <td>{index + 1}</td>
-              <td>{item.nama_produk}</td>
-              <td>{item.kategori}</td>
-              <td>{item.harga}</td>
-              <td>{item.stok}</td>
-              <td>{item.deskripsi}</td>
-              <td>{new Date(item.tanggal_input).toLocaleDateString("id-ID")}</td>
-              <td>
-                <button className="btn btn-warning btn-sm me-2" onClick={() => openEditModal(item)}>
-                  Edit
-                </button>
-                <button className="btn btn-danger btn-sm" onClick={() => handleDelete(item.id)}>
-                  Hapus
-                </button>
+          {filteredProduk.length > 0 ? (
+            filteredProduk.map((item, index) => (
+              <tr key={item.id}>
+                <td>{index + 1}</td>
+                <td>{item.nama_produk}</td>
+                <td>{item.kategori}</td>
+                <td>{item.harga}</td>
+                <td>{item.stok}</td>
+                <td>{item.deskripsi}</td>
+                <td>
+                  {new Date(item.tanggal_input).toLocaleDateString("id-ID")}
+                </td>
+                <td>
+                  <button
+                    className="btn btn-warning btn-sm me-2"
+                    onClick={() => openEditModal(item)}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    className="btn btn-danger btn-sm"
+                    onClick={() => handleDelete(item.id)}
+                  >
+                    Hapus
+                  </button>
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr colSpan="8">
+              <td colSpan={8} className="py-3 text-center text-secondary">
+                Data tidak ada
               </td>
             </tr>
-          ))}
+          )}
         </tbody>
       </table>
 
@@ -173,7 +190,11 @@ export default function Produk() {
                 <h5 className="modal-title">
                   {idEdit ? "Edit Produk" : "Tambah Produk"}
                 </h5>
-                <button type="button" className="btn-close" data-bs-dismiss="modal" />
+                <button
+                  type="button"
+                  className="btn-close"
+                  data-bs-dismiss="modal"
+                />
               </div>
 
               <div className="modal-body">
@@ -212,6 +233,7 @@ export default function Produk() {
 
                 <div className="form-floating mb-2">
                   <input
+                    type="number"
                     className="form-control"
                     placeholder="Harga"
                     value={harga}
@@ -223,6 +245,7 @@ export default function Produk() {
 
                 <div className="form-floating mb-2">
                   <input
+                    type="number"
                     className="form-control"
                     placeholder="Stok"
                     value={stok}
@@ -252,7 +275,6 @@ export default function Produk() {
           </div>
         </div>
       </div>
-
     </div>
   );
 }
